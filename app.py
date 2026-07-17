@@ -37,21 +37,25 @@ def home():
 @app.route("/students")
 def students():
 
-    search = request.args.get("search")
+    search = request.args.get("search", "")
+    page = request.args.get("page", 1, type=int)
+
+    query = Student.query
 
     if search:
-        students = Student.query.filter(
+        query = query.filter(
             (Student.student_id.contains(search))
             | (Student.first_name.contains(search))
             | (Student.last_name.contains(search))
             | (Student.email.contains(search))
             | (Student.program.contains(search))
-        ).all()
+        )
 
-    else:
-        students = Student.query.all()
+    pagination = query.paginate(page=page, per_page=5, error_out=False)
 
-    return render_template("students.html", students=students, search=search)
+    return render_template(
+        "students.html", students=pagination.items, pagination=pagination, search=search
+    )
 
 
 @app.route("/students/add", methods=["GET", "POST"])
