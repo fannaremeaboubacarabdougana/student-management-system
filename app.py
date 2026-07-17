@@ -1,25 +1,25 @@
-from config import Config
-from models import db, Student, User
 from flask import Flask, render_template, request, redirect, url_for, flash
-from sqlalchemy import func
-
-# from routes.auth import auth
-# from routes.dashboard import dashboard
 from flask_login import (
-    LoginManager,
     login_user,
     logout_user,
     login_required,
     current_user,
 )
+from sqlalchemy import func
+
+from config import Config
+from extensions import db, login_manager
+from models import Student, User
+
+# Blueprints (we'll enable these later)
+# from routes.auth import auth
+# from routes.dashboard import dashboard
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Initialize extensions
 db.init_app(app)
-
-login_manager = LoginManager()
-
 login_manager.init_app(app)
 
 login_manager.login_view = "login"
@@ -30,6 +30,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+# Register blueprints (later in Sprint 15)
 # app.register_blueprint(auth)
 # app.register_blueprint(dashboard)
 
@@ -78,10 +79,17 @@ def students():
             | (Student.program.contains(search))
         )
 
-    pagination = query.paginate(page=page, per_page=5, error_out=False)
+    pagination = query.paginate(
+        page=page,
+        per_page=5,
+        error_out=False,
+    )
 
     return render_template(
-        "students.html", students=pagination.items, pagination=pagination, search=search
+        "students.html",
+        students=pagination.items,
+        pagination=pagination,
+        search=search,
     )
 
 
@@ -131,7 +139,10 @@ def edit_student(id):
 
         return redirect(url_for("students"))
 
-    return render_template("edit_student.html", student=student)
+    return render_template(
+        "edit_student.html",
+        student=student,
+    )
 
 
 @app.route("/students/delete/<int:id>")
@@ -139,7 +150,11 @@ def edit_student(id):
 def delete_student(id):
 
     if current_user.role != "admin":
-        flash("You do not have permission to delete students.", "danger")
+        flash(
+            "You do not have permission to delete students.",
+            "danger",
+        )
+
         return redirect(url_for("students"))
 
     student = Student.query.get_or_404(id)
@@ -168,7 +183,10 @@ def login():
 
             return redirect(url_for("home"))
 
-        flash("Invalid username or password.", "danger")
+        flash(
+            "Invalid username or password.",
+            "danger",
+        )
 
     return render_template("login.html")
 
@@ -179,13 +197,17 @@ def logout():
 
     logout_user()
 
-    flash("Logged out successfully.", "success")
+    flash(
+        "Logged out successfully.",
+        "success",
+    )
 
     return redirect(url_for("login"))
 
 
 with app.app_context():
     db.create_all()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
