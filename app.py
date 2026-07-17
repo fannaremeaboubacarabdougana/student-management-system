@@ -1,4 +1,3 @@
-from flask import Flask, render_template
 from config import Config
 from models import db, Student
 from flask import Flask, render_template, request, redirect, url_for
@@ -13,6 +12,14 @@ db.init_app(app)
 def home():
 
     return render_template("index.html")
+
+
+@app.route("/students")
+def students():
+
+    students = Student.query.all()
+
+    return render_template("students.html", students=students)
 
 
 @app.route("/students/add", methods=["GET", "POST"])
@@ -37,12 +44,36 @@ def add_student():
     return render_template("add_student.html")
 
 
-@app.route("/students")
-def students():
+@app.route("/students/edit/<int:id>", methods=["GET", "POST"])
+def edit_student(id):
 
-    students = Student.query.all()
+    student = Student.query.get_or_404(id)
 
-    return render_template("students.html", students=students)
+    if request.method == "POST":
+        student.student_id = request.form["student_id"]
+        student.first_name = request.form["first_name"]
+        student.last_name = request.form["last_name"]
+        student.email = request.form["email"]
+        student.phone = request.form["phone"]
+        student.program = request.form["program"]
+        student.level = request.form["level"]
+
+        db.session.commit()
+
+        return redirect(url_for("students"))
+
+    return render_template("edit_student.html", student=student)
+
+
+@app.route("/students/delete/<int:id>")
+def delete_student(id):
+
+    student = Student.query.get_or_404(id)
+
+    db.session.delete(student)
+    db.session.commit()
+
+    return redirect(url_for("students"))
 
 
 with app.app_context():

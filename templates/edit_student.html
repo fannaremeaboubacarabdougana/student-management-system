@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+
+<h2>Edit Student</h2>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label class="form-label">Student ID</label>
+        <input type="text" name="student_id" class="form-control" value="{{ student.student_id }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <input type="text" name="first_name" class="form-control" value="{{ student.first_name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <input type="text" name="last_name" class="form-control" value="{{ student.last_name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ student.email }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="text" name="phone" class="form-control" value="{{ student.phone }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Program</label>
+        <input type="text" name="program" class="form-control" value="{{ student.program }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Level</label>
+        <input type="number" name="level" class="form-control" value="{{ student.level }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Update Student
+    </button>
+
+    <a href="{{ url_for('students') }}" class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>
+
+{% endblock %}
