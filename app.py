@@ -1,6 +1,7 @@
 from config import Config
 from models import db, Student
 from flask import Flask, render_template, request, redirect, url_for
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -11,7 +12,26 @@ db.init_app(app)
 @app.route("/")
 def home():
 
-    return render_template("index.html")
+    total_students = Student.query.count()
+
+    total_programs = db.session.query(
+        func.count(func.distinct(Student.program))
+    ).scalar()
+
+    average_level = db.session.query(func.avg(Student.level)).scalar()
+
+    students_with_email = Student.query.filter(Student.email != None).count()
+
+    if average_level is None:
+        average_level = 0
+
+    return render_template(
+        "index.html",
+        total_students=total_students,
+        total_programs=total_programs,
+        average_level=round(average_level),
+        students_with_email=students_with_email,
+    )
 
 
 @app.route("/students")

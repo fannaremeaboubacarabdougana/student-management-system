@@ -4,24 +4,62 @@
 
 {% block content %}
 
-<h1>Welcome 👋</h1>
+<div class="container mt-4">
 
-<p>
-    This is the Student Management System.
-</p>
+    <h1 class="mb-4">
+        Student Management Dashboard
+    </h1>
 
-<div class="row mt-4">
+    <div class="row">
 
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-
-                <h5>Total Students</h5>
-
-                <h2>0</h2>
-
+        <div class="col-md-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Total Students</h5>
+                    <h1>{{ total_students }}</h1>
+                </div>
             </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Programs</h5>
+                    <h1>{{ total_programs }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Average Level</h5>
+                    <h1>{{ average_level }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Students with Email</h5>
+                    <h1>{{ students_with_email }}</h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-5">
+
+        <a href="{{ url_for('add_student') }}" class="btn btn-success btn-lg">
+            Add Student
+        </a>
+
+        <a href="{{ url_for('students') }}" class="btn btn-primary btn-lg">
+            View Students
+        </a>
+
     </div>
 
 </div>
