@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+
 from flask_login import (
     login_user,
     logout_user,
@@ -47,17 +48,39 @@ def home():
 
     average_level = db.session.query(func.avg(Student.level)).scalar()
 
+    highest_level = db.session.query(func.max(Student.level)).scalar()
+
+    lowest_level = db.session.query(func.min(Student.level)).scalar()
+
     students_with_email = Student.query.filter(Student.email != None).count()
+
+    recent_students = Student.query.order_by(Student.id.desc()).limit(5).all()
+
+    program_counts = (
+        db.session.query(Student.program, func.count(Student.id))
+        .group_by(Student.program)
+        .all()
+    )
 
     if average_level is None:
         average_level = 0
+
+    if highest_level is None:
+        highest_level = 0
+
+    if lowest_level is None:
+        lowest_level = 0
 
     return render_template(
         "index.html",
         total_students=total_students,
         total_programs=total_programs,
         average_level=round(average_level),
+        highest_level=highest_level,
+        lowest_level=lowest_level,
         students_with_email=students_with_email,
+        recent_students=recent_students,
+        program_counts=program_counts,
     )
 
 
