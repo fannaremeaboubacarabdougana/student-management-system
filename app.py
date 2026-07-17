@@ -1,6 +1,6 @@
 from config import Config
 from models import db, Student
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import func
 
 app = Flask(__name__)
@@ -71,7 +71,9 @@ def add_student():
         db.session.add(student)
         db.session.commit()
 
-        return redirect(url_for("home"))
+        flash("Student added successfully!", "success")
+
+        return redirect(url_for("students"))
 
     return render_template("add_student.html")
 
@@ -92,6 +94,8 @@ def edit_student(id):
 
         db.session.commit()
 
+        flash("Student updated successfully!", "success")
+
         return redirect(url_for("students"))
 
     return render_template("edit_student.html", student=student)
@@ -104,6 +108,8 @@ def delete_student(id):
 
     db.session.delete(student)
     db.session.commit()
+
+    flash("Student deleted successfully!", "danger")
 
     return redirect(url_for("students"))
 
