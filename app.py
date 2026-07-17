@@ -37,9 +37,21 @@ def home():
 @app.route("/students")
 def students():
 
-    students = Student.query.all()
+    search = request.args.get("search")
 
-    return render_template("students.html", students=students)
+    if search:
+        students = Student.query.filter(
+            (Student.student_id.contains(search))
+            | (Student.first_name.contains(search))
+            | (Student.last_name.contains(search))
+            | (Student.email.contains(search))
+            | (Student.program.contains(search))
+        ).all()
+
+    else:
+        students = Student.query.all()
+
+    return render_template("students.html", students=students, search=search)
 
 
 @app.route("/students/add", methods=["GET", "POST"])
