@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-lg border-0">
+
+    <div class="card-header bg-primary text-white">
+
+        <h3>
+
+            <i class="bi bi-person-circle"></i>
+
+            Student Profile
+
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="text-center">
+
+                <i class="bi bi-person-circle display-1 text-primary"></i>
+
+                <h3>
+
+                    {{ student.first_name }}
+
+                    {{ student.last_name }}
+
+                </h3>
+
+                <span class="badge bg-success">
+
+                    Level {{ student.level }}
+
+                </span>
+
+            </div>
+
+            <div class="col-md-9">
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Student ID</th>
+                        <td>{{ student.student_id }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ student.email }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Phone</th>
+                        <td>{{ student.phone }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Program</th>
+                        <td>{{ student.program }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Level</th>
+                        <td>{{ student.level }}</td>
+                    </tr>
+
+                </table>
+
+                <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-warning">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    Edit
+
+                </a>
+
+                <a href="{{ url_for('students') }}" class="btn btn-secondary">
+
+                    Back
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

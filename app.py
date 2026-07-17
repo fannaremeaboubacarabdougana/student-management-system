@@ -93,6 +93,15 @@ def students():
     )
 
 
+@app.route("/students/<int:id>")
+@login_required
+def student_profile(id):
+
+    student = Student.query.get_or_404(id)
+
+    return render_template("student_profile.html", student=student)
+
+
 @app.route("/students/add", methods=["GET", "POST"])
 @login_required
 def add_student():
