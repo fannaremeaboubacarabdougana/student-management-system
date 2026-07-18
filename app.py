@@ -542,6 +542,43 @@ os.makedirs("database", exist_ok=True)
 with app.app_context():
     db.create_all()
 
+    # -----------------------------
+    # Create default admin account
+    # -----------------------------
+    admin = User.query.filter_by(username="admin").first()
+
+    if not admin:
+        admin = User(
+            username="admin",
+            email="admin@example.com",
+            role="admin",
+        )
+
+        admin.set_password("admin123")
+
+        db.session.add(admin)
+        db.session.commit()
+
+        print("✓ Default admin account created")
+
+    # -----------------------------
+    # Create default system settings
+    # -----------------------------
+    setting = Setting.query.first()
+
+    if not setting:
+        setting = Setting(
+            school_name="Student Management System",
+            admin_email="admin@example.com",
+            students_per_page=5,
+            theme="light",
+        )
+
+        db.session.add(setting)
+        db.session.commit()
+
+        print("✓ Default settings created")
+
 
 @app.route("/settings", methods=["GET", "POST"])
 @login_required
