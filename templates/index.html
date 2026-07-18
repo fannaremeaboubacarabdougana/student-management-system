@@ -6,37 +6,53 @@
 
 <div class="container mt-4">
 
-    <h1 class="mb-4">
-        Student Management Dashboard
-    </h1>
+    ```
+    <!-- Page Header -->
 
-    <div class="mb-4">
-        <h2>
-            Welcome,
-            {{ current_user.username }} 👋
-        </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <p class="text-muted">
-            Here's a quick overview of your student management system.
-        </p>
+        <div>
+
+            <h1 class="mb-1">
+
+                <i class="bi bi-speedometer2"></i>
+
+                {{ setting.school_name }}
+
+                Dashboard
+
+            </h1>
+
+            <p class="text-muted mb-0">
+
+                Welcome back, <strong>{{ current_user.username }} to {{ setting.school_name }}</strong> 👋
+
+            </p>
+
+        </div>
+
     </div>
 
+    <!-- Statistic Cards -->
 
-    <!-- Dashboard Cards -->
+    <div class="row g-4 mb-5">
 
-    <div class="row g-4">
+        <div class="col-md-6 col-xl-3">
 
-        <div class="col-md-3">
+            <div class="card {% if setting and setting.theme=='dark' %}
 
-            <div class="card shadow-sm border-0">
+bg-secondary
+text-light
+
+{% endif %} border-0 shadow-sm h-100">
 
                 <div class="card-body text-center">
 
                     <i class="bi bi-people-fill display-4 text-primary"></i>
 
-                    <h5 class="mt-3">Students</h5>
+                    <h6 class="text-muted mt-3">Total Students</h6>
 
-                    <h2>{{ total_students }}</h2>
+                    <h2 class="fw-bold">{{ total_students }}</h2>
 
                 </div>
 
@@ -44,17 +60,22 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6 col-xl-3">
 
-            <div class="card shadow-sm border-0">
+            <div class="card {% if setting and setting.theme=='dark' %}
+
+bg-secondary
+text-light
+
+{% endif %} border-0 shadow-sm h-100">
 
                 <div class="card-body text-center">
 
                     <i class="bi bi-book-fill display-4 text-success"></i>
 
-                    <h5 class="mt-3">Programs</h5>
+                    <h6 class="text-muted mt-3">Programs</h6>
 
-                    <h2>{{ total_programs }}</h2>
+                    <h2 class="fw-bold">{{ total_programs }}</h2>
 
                 </div>
 
@@ -62,17 +83,22 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6 col-xl-3">
 
-            <div class="card shadow-sm border-0">
+            <div class="card {% if setting and setting.theme=='dark' %}
+
+bg-secondary
+text-light
+
+{% endif %} border-0 shadow-sm h-100">
 
                 <div class="card-body text-center">
 
                     <i class="bi bi-bar-chart-fill display-4 text-warning"></i>
 
-                    <h5 class="mt-3">Average Level</h5>
+                    <h6 class="text-muted mt-3">Average Level</h6>
 
-                    <h2>{{ average_level }}</h2>
+                    <h2 class="fw-bold">{{ average_level }}</h2>
 
                 </div>
 
@@ -80,17 +106,85 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6 col-xl-3">
 
-            <div class="card shadow-sm border-0">
+            <div class="card {% if setting and setting.theme=='dark' %}
+
+bg-secondary
+text-light
+
+{% endif %} border-0 shadow-sm h-100">
 
                 <div class="card-body text-center">
 
                     <i class="bi bi-envelope-fill display-4 text-danger"></i>
 
-                    <h5 class="mt-3">Emails</h5>
+                    <h6 class="text-muted mt-3">Students with Email</h6>
 
-                    <h2>{{ students_with_email }}</h2>
+                    <h2 class="fw-bold">{{ students_with_email }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Analytics Charts -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-lg-7">
+
+            <div class="card {% if setting and setting.theme=='dark' %}
+
+bg-secondary
+text-light
+
+{% endif %} border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 pt-4">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-bar-chart-line-fill text-primary"></i>
+
+                        Students by Program
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="programChart" height="140"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-5">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 pt-4">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-pie-chart-fill text-success"></i>
+
+                        Students by Level
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="levelChart" height="140"></canvas>
 
                 </div>
 
@@ -102,115 +196,80 @@
 
     <!-- Recent Students -->
 
-    <div class="card shadow mt-5">
+    <div class="card {% if setting and setting.theme=='dark' %}
 
-        <div class="card-header bg-primary text-white">
+bg-secondary
+text-light
 
-            <h4 class="mb-0">
+{% endif %} border-0 shadow-sm mb-5">
+
+        <div class="card-header bg-primary text-white border-0">
+
+            <h5 class="mb-0">
 
                 <i class="bi bi-clock-history"></i>
 
-                Recent Students
+                Recently Added Students
 
-            </h4>
-
-        </div>
-
-        <div class="card-body">
-
-            <table class="table table-hover">
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Name</th>
-
-                        <th>Program</th>
-
-                        <th>Level</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {% for student in recent_students %}
-
-                    <tr>
-
-                        <td>{{ student.student_id }}</td>
-
-                        <td>{{ student.first_name }} {{ student.last_name }}</td>
-
-                        <td>{{ student.program }}</td>
-
-                        <td>{{ student.level }}</td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            </h5>
 
         </div>
 
-    </div>
+        <div class="card-body p-0">
 
-    <!-- Students by Program -->
+            <div class="table-responsive">
 
-    <div class="card shadow mt-4">
+                <table class="table {% if setting and setting.theme=='dark' %}
 
-        <div class="card-header bg-success text-white">
+table-dark
 
-            <h4 class="mb-0">
+{% else %}
 
-                <i class="bi bi-pie-chart-fill"></i>
+table-striped
 
-                Students by Program
+{% endif %} table-hover align-middle mb-0">
 
-            </h4>
+                    <thead class="table-light">
 
-        </div>
+                        <tr>
 
-        <div class="card-body">
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Program</th>
+                            <th>Level</th>
 
-            <table class="table">
+                        </tr>
 
-                <thead>
+                    </thead>
 
-                    <tr>
+                    <tbody>
 
-                        <th>Program</th>
+                        {% for student in recent_students %}
 
-                        <th>Total Students</th>
+                        <tr>
 
-                    </tr>
+                            <td><strong>{{ student.student_id }}</strong></td>
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                            <td>{{ student.program }}</td>
+                            <td>
 
-                </thead>
+                                <span class="badge bg-primary">
 
-                <tbody>
+                                    {{ student.level }}
 
-                    {% for program, count in program_counts %}
+                                </span>
 
-                    <tr>
+                            </td>
 
-                        <td>{{ program }}</td>
+                        </tr>
 
-                        <td>{{ count }}</td>
+                        {% endfor %}
 
-                    </tr>
+                    </tbody>
 
-                    {% endfor %}
+                </table>
 
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -218,45 +277,62 @@
 
     <!-- System Summary -->
 
-    <div class="card shadow mt-4">
+    <div class="card {% if setting and setting.theme=='dark' %}
 
-        <div class="card-header bg-dark text-white">
+bg-secondary
+text-light
 
-            <h4 class="mb-0">
+{% endif %} border-0 shadow-sm mb-5">
+
+        <div class="card-header bg-dark text-white border-0">
+
+            <h5 class="mb-0">
 
                 <i class="bi bi-graph-up-arrow"></i>
 
                 System Summary
 
-            </h4>
+            </h5>
 
         </div>
 
         <div class="card-body">
 
-            <div class="row text-center">
+            <div class="row text-center g-4">
 
                 <div class="col-md-4">
 
-                    <h5 class="text-success">Highest Level</h5>
+                    <div class="p-3 border rounded-3 bg-light">
 
-                    <h3>{{ highest_level }}</h3>
+                        <h6 class="text-success mb-2">Highest Level</h6>
+
+                        <h2 class="fw-bold text-success">{{ highest_level }}</h2>
+
+                    </div>
 
                 </div>
 
                 <div class="col-md-4">
 
-                    <h5 class="text-warning">Average Level</h5>
+                    <div class="p-3 border rounded-3 bg-light">
 
-                    <h3>{{ average_level }}</h3>
+                        <h6 class="text-warning mb-2">Average Level</h6>
+
+                        <h2 class="fw-bold text-warning">{{ average_level }}</h2>
+
+                    </div>
 
                 </div>
 
                 <div class="col-md-4">
 
-                    <h5 class="text-danger">Lowest Level</h5>
+                    <div class="p-3 border rounded-3 bg-light">
 
-                    <h3>{{ lowest_level }}</h3>
+                        <h6 class="text-danger mb-2">Lowest Level</h6>
+
+                        <h2 class="fw-bold text-danger">{{ lowest_level }}</h2>
+
+                    </div>
 
                 </div>
 
@@ -268,9 +344,9 @@
 
     <!-- Quick Actions -->
 
-    <div class="mt-5">
+    <div class="d-flex flex-wrap gap-3 mb-5">
 
-        <a href="{{ url_for('add_student') }}" class="btn btn-success btn-lg">
+        <a href="{{ url_for('add_student') }}" class="btn btn-success btn-lg px-4">
 
             <i class="bi bi-person-plus-fill"></i>
 
@@ -278,7 +354,7 @@
 
         </a>
 
-        <a href="{{ url_for('students') }}" class="btn btn-primary btn-lg">
+        <a href="{{ url_for('students') }}" class="btn btn-primary btn-lg px-4">
 
             <i class="bi bi-people-fill"></i>
 
@@ -288,12 +364,138 @@
 
     </div>
 
-    <footer class="text-center mt-5 mb-3 text-muted">
+    <!-- Footer -->
 
-        Student Management System © 2026
+    <footer class="text-center text-muted py-4 border-top">
+
+        <small>
+
+            {{ setting.school_name if setting else "Student Management System" }}
+
+            © 2026 • Built with Flask & Bootstrap
+
+        </small>
 
     </footer>
+    ```
 
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+    // Students by Program (Bar Chart)
+
+    const programCtx = document.getElementById('programChart');
+
+    new Chart(programCtx, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: {{ program_labels | tojson }},
+
+        datasets: [{
+
+            label: 'Students',
+
+            data: {{ program_counts | tojson }},
+
+        backgroundColor: '#0d6efd',
+
+        borderRadius: 8
+
+        }]
+
+    },
+
+        options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                display: false
+
+            }
+
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+
+                    precision: 0
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+    // Students by Level (Pie Chart)
+
+    const levelCtx = document.getElementById('levelChart');
+
+    new Chart(levelCtx, {
+
+        type: 'pie',
+
+        data: {
+
+            labels: {{ level_labels | tojson }},
+
+        datasets: [{
+
+            data: {{ level_counts | tojson }},
+
+        backgroundColor: [
+
+            '#0d6efd',
+            '#198754',
+            '#ffc107',
+            '#dc3545',
+            '#6f42c1',
+            '#fd7e14'
+
+        ]
+
+        }]
+
+    },
+
+        options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                position: 'bottom'
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

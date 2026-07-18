@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}System Settings{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        ⚙️ System Settings
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                School Name
+            </label>
+
+            <input type="text" name="school_name" class="form-control" value="{{ setting.school_name }}" required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Administrator Email
+            </label>
+
+            <input type="email" name="admin_email" class="form-control" value="{{ setting.admin_email }}" required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Students Per Page
+            </label>
+
+            <select name="students_per_page" class="form-select">
+
+                {% for n in [5,10,15,20,25] %}
+
+                <option value="{{ n }}" {% if setting.students_per_page==n %}selected{% endif %}>
+
+                    {{ n }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Theme
+            </label>
+
+            <select name="theme" class="form-select">
+
+                <option value="light" {% if setting.theme=="light" %}selected{% endif %}>
+                    Light
+                </option>
+
+                <option value="dark" {% if setting.theme=="dark" %}selected{% endif %}>
+                    Dark
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                School Logo
+            </label>
+
+            <input type="file" name="logo" class="form-control">
+
+        </div>
+
+        {% if setting.logo %}
+
+        <div class="mb-3">
+
+            <img src="{{ url_for('static', filename='uploads/' + setting.logo) }}" width="120" class="img-thumbnail">
+
+        </div>
+
+        {% endif %}
+
+        <button class="btn btn-primary">
+
+            Save Settings
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
