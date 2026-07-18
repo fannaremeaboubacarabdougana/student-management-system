@@ -562,6 +562,25 @@ with app.app_context():
         print("✓ Default admin account created")
 
     # -----------------------------
+    # Create default staff account
+    # -----------------------------
+    staff = User.query.filter_by(username="staff").first()
+
+    if not staff:
+        staff = User(
+            username="staff",
+            email="staff@example.com",
+            role="staff",
+        )
+
+        staff.set_password("staff123")
+
+        db.session.add(staff)
+        db.session.commit()
+
+        print("✓ Default staff account created")
+
+    # -----------------------------
     # Create default system settings
     # -----------------------------
     setting = Setting.query.first()
