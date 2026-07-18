@@ -537,6 +537,8 @@ def inject_settings():
     return dict(setting=setting)
 
 
+os.makedirs("database", exist_ok=True)
+
 with app.app_context():
     db.create_all()
 
