@@ -136,8 +136,17 @@ navbar-dark bg-primary
                     </li>
 
                     {% endif %}
+                    {% if current_user.is_authenticated and current_user.role == "admin" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('users') }}">
+                            <i class="bi bi-people-fill"></i>
+                            Users
+                        </a>
+                    </li>
+                    {% endif %}
 
                 </ul>
+
 
             </div>
 
@@ -149,6 +158,8 @@ navbar-dark bg-primary
             Profile
 
         </a>
+
+
         {% if current_user.is_authenticated and current_user.role == "admin" %}
 
         <a href="{{ url_for('activity_logs') }}" class="btn btn-outline-light me-2">

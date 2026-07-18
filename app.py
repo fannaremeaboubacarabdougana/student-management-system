@@ -166,6 +166,48 @@ def students():
     )
 
 
+@app.route("/users")
+@login_required
+def users():
+
+    # Only admins can access this page
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home"))
+
+    search = request.args.get("search", "")
+    page = request.args.get("page", 1, type=int)
+
+    query = User.query
+
+    if search:
+        query = query.filter(
+            (User.username.contains(search))
+            | (User.email.contains(search))
+            | (User.role.contains(search))
+        )
+
+    pagination = query.paginate(page=page, per_page=5, error_out=False)
+
+    users = User.query.all()
+
+    total_users = len(users)
+
+    admins = User.query.filter_by(role="admin").count()
+
+    staff = User.query.filter_by(role="staff").count()
+
+    return render_template(
+        "users.html",
+        users=pagination.items,
+        pagination=pagination,
+        search=search,
+        total_users=total_users,
+        admins=admins,
+        staff=staff,
+    )
+
+
 @app.route("/students/<int:id>")
 @login_required
 def student_profile(id):
@@ -530,6 +572,147 @@ def profile():
     return render_template("profile.html")
 
 
+@app.route("/users/add", methods=["GET", "POST"])
+@login_required
+def add_user():
+
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        email = request.form["email"].strip()
+        password = request.form["password"]
+        role = request.form["role"]
+
+        # Check username
+        if User.query.filter_by(username=username).first():
+            flash("Username already exists.", "danger")
+            return redirect(url_for("add_user"))
+
+        # Check email
+        if User.query.filter_by(email=email).first():
+            flash("Email already exists.", "danger")
+            return redirect(url_for("add_user"))
+
+        user = User(
+            username=username,
+            email=email,
+            role=role,
+        )
+
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash("User created successfully!", "success")
+
+        return redirect(url_for("users"))
+
+    return render_template("add_user.html")
+
+
+@app.route("/users/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_user(id):
+
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home"))
+
+    user = User.query.get_or_404(id)
+
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        email = request.form["email"].strip()
+        role = request.form["role"]
+
+        # Username already used by another user
+        existing_user = User.query.filter(
+            User.username == username, User.id != id
+        ).first()
+
+        if existing_user:
+            flash("Username already exists.", "danger")
+            return redirect(url_for("edit_user", id=id))
+
+        # Email already used by another user
+        existing_email = User.query.filter(User.email == email, User.id != id).first()
+
+        if existing_email:
+            flash("Email already exists.", "danger")
+            return redirect(url_for("edit_user", id=id))
+
+        user.username = username
+        user.email = email
+        user.role = role
+
+        db.session.commit()
+
+        flash("User updated successfully!", "success")
+
+        return redirect(url_for("users"))
+
+    return render_template("edit_user.html", user=user)
+
+
+@app.route("/users/delete/<int:id>")
+@login_required
+def delete_user(id):
+
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home"))
+
+    user = User.query.get_or_404(id)
+
+    # Prevent deleting yourself
+    if user.id == current_user.id:
+        flash("You cannot delete your own account.", "danger")
+        return redirect(url_for("users"))
+
+    # Log activity
+    log = ActivityLog(
+        username=current_user.username, action=f"Deleted user '{user.username}'"
+    )
+
+    db.session.add(log)
+
+    db.session.delete(user)
+
+    db.session.commit()
+
+    flash("User deleted successfully!", "success")
+
+    return redirect(url_for("users"))
+
+
+@app.route("/users/reset-password/<int:id>", methods=["GET", "POST"])
+@login_required
+def reset_user_password(id):
+
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("users"))
+
+    user = User.query.get_or_404(id)
+
+    if request.method == "POST":
+        new_password = request.form["password"]
+
+        user.set_password(new_password)
+
+        db.session.commit()
+
+        flash("Password reset successfully.", "success")
+
+        return redirect(url_for("users"))
+
+    return render_template("reset_user_password.html", user=user)
+
+
 @app.context_processor
 def inject_settings():
     setting = Setting.query.first()
@@ -560,25 +743,6 @@ with app.app_context():
         db.session.commit()
 
         print("✓ Default admin account created")
-
-    # -----------------------------
-    # Create default staff account
-    # -----------------------------
-    staff = User.query.filter_by(username="staff").first()
-
-    if not staff:
-        staff = User(
-            username="staff",
-            email="staff@example.com",
-            role="staff",
-        )
-
-        staff.set_password("staff123")
-
-        db.session.add(staff)
-        db.session.commit()
-
-        print("✓ Default staff account created")
 
     # -----------------------------
     # Create default system settings
