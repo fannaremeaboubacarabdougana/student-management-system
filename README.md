@@ -349,6 +349,7 @@ Deployment includes:
 Management Information Systems (MIS) Student
 
 - GitHub: https://github.com/fannaremeaboubacarabdougana/student-management-system.git
+- LinkedIn: www.linkedin.com/in/fannareme-aboubacar
 - Email: fannaremeaboubacarabdougana@gmail.com
 
 ---
